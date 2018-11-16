@@ -1,0 +1,203 @@
+---
+title: "Oak Sapling EDA"
+author: "Chad Zirbel"
+date: "November 7, 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=F, results='hide', include=F}
+##load packages
+library(lme4)
+library(car)
+library(data.table)
+library(ggplot2)
+library(ggridges)
+
+##load data
+source("oak_sapling_data_clean.r") #load in cleaned oak sapling data
+#oak.data is the cleaned file with height and root colar diameter for each sapling
+
+#brun frequency, grazing, vegetation class data for each plot
+site.data<-read.csv("e321_site_data.csv")
+site.data$plot<-as.factor(site.data$plot)
+
+#calcualte oak growth (dropping leaves for now to avoid duplicating rows)
+oak.data<-data.table::dcast(setDT(oak.data), plot+subplot+tree.id+species ~ season+year,
+                value.var = c("height", "diameter")) 
+#height
+oak.data$height_f_sp_18<-oak.data$height_fall_2018-oak.data$height_spring_2018
+#diameter
+oak.data$diameter_f_sp_18<-oak.data$diameter_fall_2018-oak.data$diameter_spring_2018
+
+#create dataframe
+full.data<-merge(oak.data,site.data,by="plot", all.x=T)
+
+```
+
+##The Model
+
+For each Oak sapling I calculated two variables
+
+* Change in height (cm) (Fall height - Spring height)
+
+* Change in root collar diameter (mm) (Fall diameter - Spring diameter)
+
+```{r}
+#change in height
+mod.height<-lmer(height_f_sp_18~fire.frequency*fence_type+fence_type*cover.type
+                 +(1|plot/subplot)+(1|species),data=full.data)
+
+#change in diameter
+mod.diameter<-lmer(diameter_f_sp_18~fire.frequency*fence_type+fence_type*cover.type
+                   +(1|plot/subplot)+(1|species),data=full.data)
+
+```
+
+Here fence type has three levels
+
+* Inside bison fence and grazed
+
+* Inside the bisn fence not grazed
+
+* Outside the bison fence
+
+Cover type also has three levels
+
+* Forest
+
+* Grass
+
+* Shrub
+
+
+##Histrogram plots
+
+
+###Change in height
+The blue curves are for *Q. macrocarpa* and the red are for *Q. ellipsoidalis*
+```{r echo=F, message=F, warning=F}
+ggplot(full.data, aes(x = height_f_sp_18, y = species,fill=species)) + 
+  geom_density_ridges(show.legend = F,rel_min_height=0.01,scale=10,size=1,alpha=0.5) +
+  ylab("Species")+ xlab("Change in height (cm)")+
+  scale_x_continuous(expand = c(0.01, 0)) +
+  scale_y_discrete(expand = c(0.01, 0))+
+  geom_vline(xintercept=0,size=1)+
+  theme(text = element_text(size=24),axis.text=element_text(colour="black"),panel.background=element_blank(),
+        panel.grid.major=element_blank(),panel.grid.minor=element_blank(),axis.line = element_line(size=1, color="black"))
+```
+
+
+###Change in root collar diameter
+```{r echo=F, message=F, warning=F}
+ggplot(full.data, aes(x = diameter_f_sp_18, y = species,fill=species)) + 
+  geom_density_ridges(show.legend = F,rel_min_height=0.01,scale=10,size=1,alpha=0.5) +
+  ylab("Species")+ xlab("Change in root collar diameter (mm)")+
+  scale_x_continuous(expand = c(0.01, 0)) +
+  scale_y_discrete(expand = c(0.01, 0))+
+  geom_vline(xintercept=0,size=1)+
+  theme(text = element_text(size=24),axis.text=element_text(colour="black"),panel.background=element_blank(),
+        panel.grid.major=element_blank(),panel.grid.minor=element_blank(),axis.line = element_line(size=1, color="black"))
+```
+
+
+##Boxplots
+Here I plot the change in height or root collar diameter for the different plot types at each fire frequency
+###Change in height
+```{r echo=F, warning=F}
+ggplot(full.data, aes(x=as.factor(fire.frequency), y=height_f_sp_18, fill=fence_type))+
+  geom_boxplot()+
+  labs(x="Fire frequency", y="Change in height (cm)")+
+  theme(text = element_text(size=24),axis.text=element_text(colour="black"),panel.background=element_blank(),
+        panel.grid.major=element_blank(),panel.grid.minor=element_blank(),axis.line = element_line(size=.7, color="black"))
+```
+
+###Change in root collar diameter
+```{r echo=F, warning=F}
+ggplot(full.data, aes(x=as.factor(fire.frequency), y=diameter_f_sp_18, fill=fence_type))+
+  geom_boxplot()+
+  labs(x="Fire frequency", y="Change in root collar\ndiameter (mm)")+
+  theme(text = element_text(size=24),axis.text=element_text(colour="black"),panel.background=element_blank(),
+        panel.grid.major=element_blank(),panel.grid.minor=element_blank(),axis.line = element_line(size=.7, color="black"))
+```
+
+##Sub-sampling to visualize change in mean variance with number of trees sampled in each plot
+New trees would be planted in fire frequency 0.5 (Plots 5, 6, 29, 30, 33, & 34) and 0.8 (Plots 27, 28, 31, 32, 41, & 42)
+
+
+###Change in height
+```{r echo=F, fig.height=10, fig.width=10, results="hide"}
+df <- full.data[order(full.data$plot),]
+
+par(mfrow=c(6,5))
+
+for(i in as.numeric(levels(full.data$plot))){
+  tempdf <- df[which(df$plot==i),]
+  
+  samples <- matrix(nrow=0,ncol=2)
+  
+  for(j in 1:18){
+    
+    x <- replicate(100,{
+      m <- mean(sample(tempdf$height_f_sp_18, j, replace = FALSE),na.rm=T)
+    })
+    
+    out <- c(j,var(x))
+    samples <- rbind(samples, out)
+    colnames(samples)<-c("NumSubsample","VarianceOfMeans")
+    row.names(samples)<-NULL
+    print(j)
+    print(var(x))
+    
+  }
+
+  sampledf <- as.data.frame(samples)
+  assign(paste("Tree_height.Plot",i,sep="."),sampledf)
+  theplot <-plot(VarianceOfMeans~NumSubsample,sampledf,main=paste("Tree height Plot",i,sep=" "))
+  theplot
+  assign(paste("plot",i,sep="."),theplot)
+  
+}
+dev.off()
+
+```
+
+
+###Change in root collar diameter
+```{r echo=F, fig.height=10, fig.width=10, results="hide"}
+par(mfrow=c(6,5))
+
+for(i in as.numeric(levels(full.data$plot))){
+  tempdf <- df[which(df$plot==i),]
+  
+  samples <- matrix(nrow=0,ncol=2)
+  
+  for(j in 1:18){
+    
+    x <- replicate(100,{
+      m <- mean(sample(tempdf$diameter_f_sp_18, j, replace = FALSE),na.rm=T)
+    })
+    
+    out <- c(j,var(x))
+    samples <- rbind(samples, out)
+    colnames(samples)<-c("NumSubsample","VarianceOfMeans")
+    row.names(samples)<-NULL
+    print(j)
+    print(var(x))
+    
+  }
+  
+  sampledf <- as.data.frame(samples)
+  assign(paste("Tree_diameter.Plot",i,sep="."),sampledf)
+  theplot <-plot(VarianceOfMeans~NumSubsample,sampledf,main=paste("Tree diameter Plot",i,sep=" "))
+  theplot
+  assign(paste("plot",i,sep="."),theplot)
+  
+}
+dev.off()
+```

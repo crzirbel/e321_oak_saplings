@@ -1,0 +1,10 @@
+.httr-oauth
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.csv
+*.xlsx
+diameter_meancurves.pdf
+height_meancurves.pdf
+oak_sapling_EDA.html
