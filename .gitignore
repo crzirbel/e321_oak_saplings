@@ -5,6 +5,6 @@
 .Ruserdata
 *.csv
 *.xlsx
-diameter_meancurves.pdf
-height_meancurves.pdf
+diameter_meanvar_curves.pdf
+height_meanvar_curves.pdf
 oak_sapling_EDA.html
