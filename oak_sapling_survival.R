@@ -11,6 +11,7 @@
 #cox survival
 #fire temp at 50cm
 #fire severity
+#test
 
 #load packages
 library(ggplot2)
