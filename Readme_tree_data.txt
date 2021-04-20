@@ -6,7 +6,7 @@
 ##EXPERIMENTAL SETUP##
 
 #Fencing
-In the fall of 2017 fencing was installed around a 220 acre section of the oak savanna at Cedar Creek. See figure x for a map of the fenced area.
+In the fall of 2017 fencing was installed around a 210 acre section of the oak savanna at Cedar Creek. See figure x for a map of the fenced area.
 
 #Plot fences
 In the spring of 2018 42 plots were established. These consit of 14 sets of plots. One plot outside the bison fence and two plots inside the fence.
@@ -15,7 +15,7 @@ excludes grazing by bison. There are 2 sets of plots in each of 7 burn units. Ea
 
 #Tree planting
 In the spring of 2018 oak saplings from two species, Quercus macrocarpa and Quercus ellipsoidalis, were planted into 30 of the 42 plots.
-Trees were not planted into plots 3,4,. Four groups of 5 trees were planted into each plot (10 from each species). These four groups consist of four
+Trees were not planted into plots 3,4,19,20,21,22,23,24,25,26,39,40. Four groups of 5 trees were planted into each plot (10 from each species). These four groups consist of four
 different planting types. A Q. macrocarpa monoculture, a Q. ellipsoidalis monoculture, four Q. macrocarpa with a Q. ellipsoidalis in the center, and
 four Q. ellipsoidalis with a Q. macrocarpa in the center. Two additional Q. macrocarpa were planted in each plot as well. This resulted in a total of
 660 trees. After planting we watered each tree with 2 gallons of water twice per week for 1 month unless there was sufficent rain.
@@ -24,6 +24,7 @@ See figure XX for a visual represntation how trees were planted into each plot.
 
 #Bison grazing
 In 2018 32 two year old male bison were allowed to graze freely within the fenced area from June 13th until September 14th.
+In 2019 17 two year old male bison were allowed to graze freely within the fenced area from May 25th until October 17th.
 
 #Tree measurements
 In the spring and Fall of 2018 and we measured all planted trees. For each tree we recoreded the height of the tallest bud, the diameter of the root collar

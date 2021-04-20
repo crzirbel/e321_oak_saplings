@@ -5,6 +5,10 @@
 .Ruserdata
 *.csv
 *.xlsx
+*.docx
+*.jpg
+.xls
 diameter_meanvar_curves.pdf
 height_meanvar_curves.pdf
+oak_seedling_survival_2019.pdf
 oak_sapling_EDA.html
