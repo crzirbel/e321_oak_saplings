@@ -7,7 +7,8 @@
 *.xlsx
 *.docx
 *.jpg
-.xls
+*.xls
+*.tiff
 diameter_meanvar_curves.pdf
 height_meanvar_curves.pdf
 oak_seedling_survival_2019.pdf
